@@ -74,7 +74,7 @@ akademik-not-sistemi/
 │   ├── 📂 routes/                  # API endpoint'leri
 │   ├── 📂 db/                      # DB bağlantısı
 │   ├── server.js                   # Express sunucu
-│   └── .env                        # Ortam değişkenleri
+│   └── env.example                 # Ortam değişkenleri örneği
 ├── 📂 frontend/
 │   ├── 📂 src/
 │   │   ├── 📂 pages/               # React sayfaları
@@ -82,8 +82,6 @@ akademik-not-sistemi/
 │   │   ├── 📂 services/            # API servisleri
 │   │   └── 📂 context/             # Auth context
 │   └── vite.config.js
-├── start.sh                        # Tek tıkla başlat
-├── ER_Diagram.dbml                 # ER diyagramı kodu
 └── README.md
 ```
 
@@ -98,7 +96,7 @@ akademik-not-sistemi/
 ### 1. Projeyi Klonla
 
 ```bash
-git clone https://github.com/[KULLANICI_ADINIZ]/akademik-not-sistemi.git
+git clone https://github.com/gedik25/akademik-not-sistemi.git
 cd akademik-not-sistemi
 ```
 
@@ -191,18 +189,6 @@ http://localhost:5173
 - `fn_CalculateAttendancePercent` - Devam yüzdesi
 - `fn_IsPassingGrade` - Geçer not kontrolü
 
-## 📸 Ekran Görüntüleri
-
-| Giriş Ekranı | Dashboard |
-|--------------|-----------|
-| ![Login](screenshots/login.png) | ![Dashboard](screenshots/dashboard.png) |
-
-| Not Girişi | Yoklama |
-|------------|---------|
-| ![Grades](screenshots/gradebook.png) | ![Attendance](screenshots/attendance.png) |
-
-*(Ekran görüntüleri `screenshots/` klasörüne eklenmelidir)*
-
 ## 🛠️ Teknolojiler
 
 | Katman | Teknoloji |
@@ -219,11 +205,10 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 
 ## 👨‍💻 Geliştirici
 
-- **Ad Soyad:** [Adınızı Yazın]
-- **Öğrenci No:** [Numaranızı Yazın]
+- **GitHub:** [@gedik25](https://github.com/gedik25)
 - **Üniversite:** Marmara Üniversitesi
 - **Bölüm:** Bilgisayar Mühendisliği
-- **Ders:** Veritabanı Yönetim Sistemleri
+- **Ders:** Veritabanı Yönetim Sistemleri (2024-2025 Güz)
 
 ---
 
