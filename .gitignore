@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment variables (contains passwords)
+.env
+*.env.local
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Build outputs
+dist/
+build/
+*.log
+
+# Test outputs
+Results.json
+Results.md
+Results1.json
+
+# Temporary SQL query files
+db/seeds/SQLQuery_*.sql
+
+# Example/Template files (not part of project)
+ÖRNEKTİR_*.pdf
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Lock files (optional - uncomment if you don't want them)
+# package-lock.json
+
+# Cursor AI files
+.cursor/
+
