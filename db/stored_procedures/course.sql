@@ -107,7 +107,8 @@ IF OBJECT_ID('dbo.sp_GetCourseCatalog', 'P') IS NOT NULL DROP PROCEDURE dbo.sp_G
 GO
 CREATE PROCEDURE dbo.sp_GetCourseCatalog
     @ProgramID INT = NULL,
-    @Term      NVARCHAR(20) = NULL
+    @Term      NVARCHAR(20) = NULL,
+    @StudentID INT = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -121,10 +122,13 @@ BEGIN
         CO.Term,
         CO.Section,
         CO.Capacity,
-        AcademicName = U.Username
+        AcademicName = U.Username,
+        IsEnrolled = CASE WHEN E.EnrollmentID IS NOT NULL THEN 1 ELSE 0 END,
+        EnrollStatus = E.EnrollStatus
     FROM dbo.CourseOfferings CO
     INNER JOIN dbo.Courses C ON CO.CourseID = C.CourseID
     INNER JOIN dbo.Users U ON CO.AcademicID = U.UserID
+    LEFT JOIN dbo.Enrollments E ON CO.OfferingID = E.OfferingID AND E.StudentID = @StudentID
     WHERE (@ProgramID IS NULL OR C.ProgramID = @ProgramID)
       AND (@Term IS NULL OR CO.Term = @Term)
     ORDER BY CO.Term DESC, C.CourseCode;

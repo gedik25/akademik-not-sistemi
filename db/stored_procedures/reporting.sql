@@ -28,7 +28,7 @@ BEGIN
     BEGIN
         -- Öğrenci istatistikleri
         SELECT
-            CourseCount = (SELECT COUNT(*) FROM dbo.Enrollments WHERE StudentID = @UserID AND EnrollStatus = 'Active'),
+            CourseCount = (SELECT COUNT(*) FROM dbo.Enrollments WHERE StudentID = @UserID),
             GPA = ISNULL((SELECT AVG(CurrentAverage) FROM dbo.Enrollments WHERE StudentID = @UserID AND CurrentAverage IS NOT NULL), 0),
             AttendanceRate = ISNULL((SELECT AVG(AttendancePercent) FROM dbo.Enrollments WHERE StudentID = @UserID AND AttendancePercent IS NOT NULL), 0),
             NotificationCount = (SELECT COUNT(*) FROM dbo.Notifications WHERE UserID = @UserID AND IsRead = 0);
@@ -36,19 +36,16 @@ BEGIN
     ELSE IF @RoleName = 'Academic'
     BEGIN
         -- Akademisyen istatistikleri
-        DECLARE @TodayDOW INT = DATEPART(WEEKDAY, GETDATE());
-        
         SELECT
             CourseCount = (SELECT COUNT(*) FROM dbo.CourseOfferings WHERE AcademicID = @UserID),
             StudentCount = (SELECT COUNT(DISTINCT E.StudentID) 
                            FROM dbo.Enrollments E 
                            INNER JOIN dbo.CourseOfferings CO ON E.OfferingID = CO.OfferingID 
-                           WHERE CO.AcademicID = @UserID AND E.EnrollStatus = 'Active'),
+                           WHERE CO.AcademicID = @UserID),
             PendingGrades = (SELECT COUNT(*) 
                             FROM dbo.Enrollments E 
                             INNER JOIN dbo.CourseOfferings CO ON E.OfferingID = CO.OfferingID 
                             WHERE CO.AcademicID = @UserID 
-                            AND E.EnrollStatus = 'Active' 
                             AND E.LetterGrade IS NULL),
             TodayClasses = (SELECT COUNT(DISTINCT CS.SessionID) 
                            FROM dbo.ClassSessions CS 

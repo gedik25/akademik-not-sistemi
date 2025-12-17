@@ -90,11 +90,12 @@ router.post('/offering', async (req, res) => {
 // GET /api/course/catalog -> sp_GetCourseCatalog
 router.get('/catalog', async (req, res) => {
     try {
-        const { programId, term } = req.query;
+        const { programId, term, studentId } = req.query;
         const pool = await poolPromise;
         const result = await pool.request()
             .input('ProgramID', sql.Int, programId ? parseInt(programId, 10) : null)
             .input('Term', sql.NVarChar(20), term || null)
+            .input('StudentID', sql.Int, studentId ? parseInt(studentId, 10) : null)
             .execute('dbo.sp_GetCourseCatalog');
         
         res.json({ success: true, courses: result.recordset });

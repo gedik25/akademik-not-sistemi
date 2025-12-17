@@ -6,10 +6,11 @@
 import api from './api';
 
 export const courseService = {
-    getCatalog: async (programId = null, term = null) => {
+    getCatalog: async (programId = null, term = null, studentId = null) => {
         const params = new URLSearchParams();
         if (programId) params.append('programId', programId);
         if (term) params.append('term', term);
+        if (studentId) params.append('studentId', studentId);
         const response = await api.get(`/course/catalog?${params}`);
         return response.data;
     },

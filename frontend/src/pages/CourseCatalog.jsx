@@ -17,12 +17,13 @@ const CourseCatalog = () => {
 
     useEffect(() => {
         fetchCourses();
-    }, [term]);
+    }, [term, user]);
 
     const fetchCourses = async () => {
         setLoading(true);
         try {
-            const result = await courseService.getCatalog(null, term);
+            // StudentID'yi de gönder - kayıtlı dersleri işaretlemek için
+            const result = await courseService.getCatalog(null, term, user?.UserID);
             if (result.success) {
                 setCourses(result.courses);
             }
@@ -46,6 +47,40 @@ const CourseCatalog = () => {
         } finally {
             setEnrolling(null);
         }
+    };
+
+    const getEnrollButton = (course) => {
+        if (course.IsEnrolled) {
+            if (course.EnrollStatus === 'Active') {
+                return (
+                    <span className="px-4 py-2 bg-green-100 text-green-700 text-sm rounded-lg font-medium">
+                        ✓ Kayıtlı
+                    </span>
+                );
+            } else if (course.EnrollStatus === 'Dropped') {
+                return (
+                    <span className="px-4 py-2 bg-gray-100 text-gray-500 text-sm rounded-lg font-medium">
+                        Bırakıldı
+                    </span>
+                );
+            } else if (course.EnrollStatus === 'Completed') {
+                return (
+                    <span className="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-lg font-medium">
+                        ✓ Tamamlandı
+                    </span>
+                );
+            }
+        }
+        
+        return (
+            <button
+                onClick={() => handleEnroll(course.OfferingID)}
+                disabled={enrolling === course.OfferingID}
+                className="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+                {enrolling === course.OfferingID ? 'Kayıt...' : 'Kayıt Ol'}
+            </button>
+        );
     };
 
     return (
@@ -94,7 +129,7 @@ const CourseCatalog = () => {
                         </thead>
                         <tbody className="divide-y divide-gray-200">
                             {courses.map((course) => (
-                                <tr key={course.OfferingID} className="hover:bg-gray-50">
+                                <tr key={course.OfferingID} className={`hover:bg-gray-50 ${course.IsEnrolled ? 'bg-green-50' : ''}`}>
                                     <td className="px-6 py-4 text-sm font-medium text-gray-900">{course.CourseCode}</td>
                                     <td className="px-6 py-4 text-sm text-gray-700">{course.CourseName}</td>
                                     <td className="px-6 py-4 text-sm text-gray-700">{course.Credit}</td>
@@ -103,13 +138,7 @@ const CourseCatalog = () => {
                                     <td className="px-6 py-4 text-sm text-gray-700">{course.AcademicName}</td>
                                     <td className="px-6 py-4 text-sm text-gray-700">{course.Capacity}</td>
                                     <td className="px-6 py-4">
-                                        <button
-                                            onClick={() => handleEnroll(course.OfferingID)}
-                                            disabled={enrolling === course.OfferingID}
-                                            className="px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                        >
-                                            {enrolling === course.OfferingID ? 'Kayıt...' : 'Kayıt Ol'}
-                                        </button>
+                                        {getEnrollButton(course)}
                                     </td>
                                 </tr>
                             ))}
@@ -122,4 +151,3 @@ const CourseCatalog = () => {
 };
 
 export default CourseCatalog;
-
