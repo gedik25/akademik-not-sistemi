@@ -39,3 +39,9 @@ Thumbs.db
 # Cursor AI files
 .cursor/
 
+# Personal/Local files (not for GitHub)
+VTYS_Final_Raporu.md
+VTYS_PROJECT_SUMMARY.md
+start.sh
+ER_Diagram.dbml
+
