@@ -9,15 +9,15 @@ import reportingService from '../services/reportingService';
 
 const Dashboard = () => {
     const { user, isAdmin, isAcademic, isStudent } = useAuth();
-    const [stats, setStats] = useState([]);
+    const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 const result = await reportingService.getDashboardStats(user.UserID);
-                if (result.success) {
-                    setStats(result.stats);
+                if (result.success && result.stats && result.stats.length > 0) {
+                    setStats(result.stats[0]);
                 }
             } catch (err) {
                 console.error('Dashboard stats error:', err);
@@ -48,26 +48,86 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {isAdmin && (
                     <>
-                        <StatCard title="Toplam Kullanıcı" value="--" icon="👥" color="bg-blue-500" />
-                        <StatCard title="Aktif Dersler" value="--" icon="📚" color="bg-green-500" />
-                        <StatCard title="Kayıtlı Öğrenci" value="--" icon="🎓" color="bg-purple-500" />
-                        <StatCard title="Akademisyen" value="--" icon="👨‍🏫" color="bg-orange-500" />
+                        <StatCard 
+                            title="Toplam Kullanıcı" 
+                            value={loading ? '...' : (stats?.TotalUsers || 0)} 
+                            icon="👥" 
+                            color="bg-blue-500" 
+                        />
+                        <StatCard 
+                            title="Aktif Dersler" 
+                            value={loading ? '...' : (stats?.ActiveCourses || 0)} 
+                            icon="📚" 
+                            color="bg-green-500" 
+                        />
+                        <StatCard 
+                            title="Kayıtlı Öğrenci" 
+                            value={loading ? '...' : (stats?.TotalStudents || 0)} 
+                            icon="🎓" 
+                            color="bg-purple-500" 
+                        />
+                        <StatCard 
+                            title="Akademisyen" 
+                            value={loading ? '...' : (stats?.TotalAcademics || 0)} 
+                            icon="👨‍🏫" 
+                            color="bg-orange-500" 
+                        />
                     </>
                 )}
                 {isAcademic && (
                     <>
-                        <StatCard title="Verdiğim Dersler" value="--" icon="📚" color="bg-blue-500" />
-                        <StatCard title="Toplam Öğrenci" value="--" icon="👥" color="bg-green-500" />
-                        <StatCard title="Bekleyen Notlar" value="--" icon="✏️" color="bg-yellow-500" />
-                        <StatCard title="Bugünkü Dersler" value="--" icon="📅" color="bg-purple-500" />
+                        <StatCard 
+                            title="Verdiğim Dersler" 
+                            value={loading ? '...' : (stats?.CourseCount || 0)} 
+                            icon="📚" 
+                            color="bg-blue-500" 
+                        />
+                        <StatCard 
+                            title="Toplam Öğrenci" 
+                            value={loading ? '...' : (stats?.StudentCount || 0)} 
+                            icon="👥" 
+                            color="bg-green-500" 
+                        />
+                        <StatCard 
+                            title="Bekleyen Notlar" 
+                            value={loading ? '...' : (stats?.PendingGrades || 0)} 
+                            icon="✏️" 
+                            color="bg-yellow-500" 
+                        />
+                        <StatCard 
+                            title="Bugünkü Dersler" 
+                            value={loading ? '...' : (stats?.TodayClasses || 0)} 
+                            icon="📅" 
+                            color="bg-purple-500" 
+                        />
                     </>
                 )}
                 {isStudent && (
                     <>
-                        <StatCard title="Kayıtlı Derslerim" value="--" icon="📚" color="bg-blue-500" />
-                        <StatCard title="Genel Ortalama" value="--" icon="📊" color="bg-green-500" />
-                        <StatCard title="Devam Oranı" value="--" icon="✅" color="bg-purple-500" />
-                        <StatCard title="Bildirimler" value="--" icon="🔔" color="bg-orange-500" />
+                        <StatCard 
+                            title="Kayıtlı Derslerim" 
+                            value={loading ? '...' : (stats?.CourseCount || 0)} 
+                            icon="📚" 
+                            color="bg-blue-500" 
+                        />
+                        <StatCard 
+                            title="Genel Ortalama" 
+                            value={loading ? '...' : (stats?.GPA ? stats.GPA.toFixed(1) : '0.0')} 
+                            icon="📊" 
+                            color="bg-green-500" 
+                        />
+                        <StatCard 
+                            title="Devam Oranı" 
+                            value={loading ? '...' : `%${stats?.AttendanceRate ? stats.AttendanceRate.toFixed(0) : '0'}`} 
+                            icon="✅" 
+                            color="bg-purple-500" 
+                        />
+                        <StatCard 
+                            title="Bildirimler" 
+                            value={loading ? '...' : (stats?.NotificationCount || 0)} 
+                            icon="🔔" 
+                            color="bg-orange-500" 
+                        />
                     </>
                 )}
             </div>
@@ -96,4 +156,3 @@ const StatCard = ({ title, value, icon, color }) => (
 );
 
 export default Dashboard;
-

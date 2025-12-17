@@ -26,26 +26,44 @@ BEGIN
 
     IF @RoleName = 'Student'
     BEGIN
+        -- Öğrenci istatistikleri
         SELECT
-            OpenEnrollments = (SELECT COUNT(*) FROM dbo.Enrollments WHERE StudentID = @UserID AND EnrollStatus = 'Active'),
-            NotificationsUnread = (SELECT COUNT(*) FROM dbo.Notifications WHERE UserID = @UserID AND IsRead = 0),
-            GPA = AVG(CurrentAverage)
-        FROM dbo.Enrollments
-        WHERE StudentID = @UserID;
+            CourseCount = (SELECT COUNT(*) FROM dbo.Enrollments WHERE StudentID = @UserID AND EnrollStatus = 'Active'),
+            GPA = ISNULL((SELECT AVG(CurrentAverage) FROM dbo.Enrollments WHERE StudentID = @UserID AND CurrentAverage IS NOT NULL), 0),
+            AttendanceRate = ISNULL((SELECT AVG(AttendancePercent) FROM dbo.Enrollments WHERE StudentID = @UserID AND AttendancePercent IS NOT NULL), 0),
+            NotificationCount = (SELECT COUNT(*) FROM dbo.Notifications WHERE UserID = @UserID AND IsRead = 0);
     END
     ELSE IF @RoleName = 'Academic'
     BEGIN
+        -- Akademisyen istatistikleri
+        DECLARE @TodayDOW INT = DATEPART(WEEKDAY, GETDATE());
+        
         SELECT
-            ActiveOfferings = (SELECT COUNT(*) FROM dbo.CourseOfferings WHERE AcademicID = @UserID),
-            PendingGrades = (SELECT COUNT(*) FROM dbo.Enrollments WHERE OfferingID IN (SELECT OfferingID FROM dbo.CourseOfferings WHERE AcademicID = @UserID) AND EnrollStatus = 'Active'),
-            NotificationsUnread = (SELECT COUNT(*) FROM dbo.Notifications WHERE UserID = @UserID AND IsRead = 0);
+            CourseCount = (SELECT COUNT(*) FROM dbo.CourseOfferings WHERE AcademicID = @UserID),
+            StudentCount = (SELECT COUNT(DISTINCT E.StudentID) 
+                           FROM dbo.Enrollments E 
+                           INNER JOIN dbo.CourseOfferings CO ON E.OfferingID = CO.OfferingID 
+                           WHERE CO.AcademicID = @UserID AND E.EnrollStatus = 'Active'),
+            PendingGrades = (SELECT COUNT(*) 
+                            FROM dbo.Enrollments E 
+                            INNER JOIN dbo.CourseOfferings CO ON E.OfferingID = CO.OfferingID 
+                            WHERE CO.AcademicID = @UserID 
+                            AND E.EnrollStatus = 'Active' 
+                            AND E.LetterGrade IS NULL),
+            TodayClasses = (SELECT COUNT(DISTINCT CS.SessionID) 
+                           FROM dbo.ClassSessions CS 
+                           INNER JOIN dbo.CourseOfferings CO ON CS.OfferingID = CO.OfferingID 
+                           WHERE CO.AcademicID = @UserID 
+                           AND CAST(CS.SessionDate AS DATE) = CAST(GETDATE() AS DATE));
     END
     ELSE
     BEGIN
+        -- Admin istatistikleri
         SELECT
+            TotalUsers = (SELECT COUNT(*) FROM dbo.Users WHERE IsActive = 1),
+            ActiveCourses = (SELECT COUNT(*) FROM dbo.CourseOfferings),
             TotalStudents = (SELECT COUNT(*) FROM dbo.Students),
-            TotalAcademics = (SELECT COUNT(*) FROM dbo.Academics),
-            ActiveCourses = (SELECT COUNT(*) FROM dbo.CourseOfferings WHERE Term LIKE CONCAT(YEAR(GETDATE()), '%'));
+            TotalAcademics = (SELECT COUNT(*) FROM dbo.Academics);
     END
 END;
 GO
