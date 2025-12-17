@@ -203,9 +203,14 @@ http://localhost:5173
 
 Bu proje MIT lisansı altında lisanslanmıştır.
 
-## 👨‍💻 Geliştirici
+## 👨‍💻 Geliştiriciler
 
-- **GitHub:** [@gedik25](https://github.com/gedik25)
+| İsim | GitHub |
+|------|--------|
+| Ali Gedik | [@gedik25](https://github.com/gedik25) |
+| Mert Deriner | - |
+| Batuhan Akar | - |
+
 - **Üniversite:** Marmara Üniversitesi
 - **Bölüm:** Bilgisayar Mühendisliği
 - **Ders:** Veritabanı Yönetim Sistemleri (2024-2025 Güz)
